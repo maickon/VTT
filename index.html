@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>VTT 3D Simples</title>
+    <link rel="stylesheet" href="css/style.css">
+    
+    <script src="https://unpkg.com/dexie/dist/dexie.js"></script>
+    
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+        }
+      }
+    </script>
+    
+    <script type="module" src="js/main.js" defer></script>
+</head>
+<body>
+    <div id="vtt-canvas"></div>
+
+    <div id="ui-layer">
+        <div class="panel">
+            <div class="panel-tabs">
+                <button class="main-tab-btn active" data-main-tab="mapa">Mapa</button>
+                <button class="main-tab-btn" data-main-tab="lib">Lib</button>
+                <button class="main-tab-btn" data-main-tab="sys">Sistema</button>
+            </div>
+
+            <!-- ABA MAPA -->
+            <div id="tab-content-mapa" class="main-tab-content">
+                <label>Modelos:</label>
+                <select id="select-preset">
+                    <option value="empty">Mapa Vazio</option>
+                    <option value="forest">Floresta</option>
+                    <option value="city">Cidade</option>
+                    <option value="desert">Deserto</option>
+                </select>
+
+                <label>Terreno:</label>
+                <select id="select-terrain">
+                    <option value="grass">Grama</option>
+                    <option value="stone">Pedra</option>
+                    <option value="snow">Neve</option>
+                    <option value="custom">URL Imagem</option>
+                </select>
+
+                <div id="custom-texture-container" class="hidden">
+                    <input type="text" id="input-terrain-url" placeholder="URL da Imagem">
+                    <button id="btn-apply-texture">Aplicar</button>
+                </div>
+
+                <label>Dimensões:</label>
+                <div style="display: flex; gap: 5px;">
+                    <input type="number" id="map-width" value="25">
+                    <input type="number" id="map-height" value="25">
+                </div>
+                <button id="btn-apply-size">Redimensionar</button>
+                
+                <label>Horário:</label>
+                <select id="select-time">
+                    <option value="day">Dia</option>
+                    <option value="afternoon">Tarde</option>
+                    <option value="night">Noite</option>
+                </select>
+            </div>
+
+            <!-- ABA BIBLIOTECA (Simplificada no painel) -->
+            <div id="tab-content-lib" class="main-tab-content hidden">
+                <button id="btn-open-library" style="background: #e67e22; margin-top: 10px;">Gerenciar Biblioteca</button>
+                <p style="font-size: 10px; color: #888; margin-top: 10px;">Abra a biblioteca para adicionar novos heróis e monstros ao mapa.</p>
+            </div>
+
+            <!-- ABA SISTEMA -->
+            <div id="tab-content-sys" class="main-tab-content hidden">
+                <button id="btn-save" style="background: #27ae60;">Salvar Tabuleiro</button>
+                <button id="btn-load" style="background: #2980b9; margin-top: 5px;">Carregar Salve</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DA BIBLIOTECA -->
+    <div id="library-modal" class="hidden">
+        <div class="library-content">
+            <div class="library-header">
+                <h2>Biblioteca de Elementos</h2>
+                <button id="btn-close-library">X</button>
+            </div>
+            
+            <div class="library-tabs">
+                <button class="tab-btn active" data-tab="heroi">Heróis</button>
+                <button class="tab-btn" data-tab="monstro">Monstros</button>
+                <button class="tab-btn" data-tab="item">Cenário</button>
+                <button class="tab-btn" data-tab="novo" style="background: #27ae60;">+ Novo</button>
+            </div>
+
+            <div id="library-grid" class="library-grid">
+                <!-- Itens carregados via JS -->
+            </div>
+
+            <div id="new-item-form" class="hidden">
+                <h3>Cadastrar Novo Elemento</h3>
+                <input type="text" id="new-nome" placeholder="Nome do Personagem/Objeto">
+                <select id="new-tipo">
+                    <option value="criatura">Criatura (Bloqueável)</option>
+                    <option value="cenario">Cenário (Bloqueia)</option>
+                </select>
+                <select id="new-categoria">
+                    <option value="heroi">Herói</option>
+                    <option value="monstro">Monstro</option>
+                    <option value="item">Item de Cenário</option>
+                </select>
+                <input type="number" id="new-tamanho" placeholder="Tamanho (Quadrados)" value="1">
+                <input type="text" id="new-imagem" placeholder="URL da Imagem">
+                <input type="color" id="new-cor" value="#d4af37">
+                <button id="btn-create-item">Salvar na Biblioteca</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="context-menu" class="hidden">
+        <ul>
+            <li id="menu-range">Mostrar Alcance</li>
+            <li class="menu-submenu">
+                Condições
+                <ul class="submenu">
+                    <li onclick="toggleStatus('blood')">🔴 Sangrando</li>
+                    <li onclick="toggleStatus('poison')">🟢 Envenenado</li>
+                    <li onclick="toggleStatus('shield')">🔵 Escudo</li>
+                    <li onclick="toggleStatus('stun')">🟡 Atordoado</li>
+                </ul>
+            </li>
+            <li id="menu-delete" style="color: #ff4444;">Excluir</li>
+        </ul>
+    </div>
+
+    <div id="nota-modal" class="hidden">
+        <div class="modal-content">
+            <h3 id="nota-titulo">Ficha do Personagem</h3>
+            <textarea id="nota-texto" rows="5" placeholder="HP, Condições, Notas..."></textarea>
+            <button id="btn-fechar-nota">Fechar</button>
+        </div>
+    </div>
+</body>
+</html>
