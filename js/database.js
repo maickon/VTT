@@ -10,16 +10,16 @@ export async function initDatabase() {
 
     const initialData = [
         // CRIATURAS - HERÓIS
-        { id: 'h1', nome: 'Guerreiro', tipo: 'criatura', categoria: 'heroi', cor: '#3498db', tamanho: 1, imagem_url: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/66.png' },
-        { id: 'h2', nome: 'Maga', tipo: 'criatura', categoria: 'heroi', cor: '#9b59b6', tamanho: 1, imagem_url: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/63.png' },
-        { id: 'h3', nome: 'Arqueiro', tipo: 'criatura', categoria: 'heroi', cor: '#2ecc71', tamanho: 1, imagem_url: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png' },
-        { id: 'h4', nome: 'Paladino', tipo: 'criatura', categoria: 'heroi', cor: '#f1c40f', tamanho: 1, imagem_url: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/4.png' },
+        { id: 'h1', nome: 'Guerreiro', tipo: 'criatura', categoria: 'heroi', cor: '#3498db', tamanho: 1, imagem_url: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/66.png', alcance_ataque: 1 },
+        { id: 'h2', nome: 'Maga', tipo: 'criatura', categoria: 'heroi', cor: '#9b59b6', tamanho: 1, imagem_url: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/63.png', alcance_ataque: 5 },
+        { id: 'h3', nome: 'Arqueiro', tipo: 'criatura', categoria: 'heroi', cor: '#2ecc71', tamanho: 1, imagem_url: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png', alcance_ataque: 8 },
+        { id: 'h4', nome: 'Paladino', tipo: 'criatura', categoria: 'heroi', cor: '#f1c40f', tamanho: 1, imagem_url: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/4.png', alcance_ataque: 1 },
 
         // CRIATURAS - MONSTROS
-        { id: 'm1', nome: 'Orc', tipo: 'criatura', categoria: 'monstro', cor: '#e74c3c', tamanho: 1, imagem_url: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/56.png' },
-        { id: 'm2', nome: 'Dragão', tipo: 'criatura', categoria: 'monstro', cor: '#c0392b', tamanho: 3, imagem_url: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/6.png' },
-        { id: 'm3', nome: 'Esqueleto', tipo: 'criatura', categoria: 'monstro', cor: '#ecf0f1', tamanho: 1, imagem_url: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/104.png' },
-        { id: 'm4', nome: 'Troll', tipo: 'criatura', categoria: 'monstro', cor: '#27ae60', tamanho: 2, imagem_url: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/68.png' },
+        { id: 'm1', nome: 'Orc', tipo: 'criatura', categoria: 'monstro', cor: '#e74c3c', tamanho: 1, imagem_url: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/56.png', alcance_ataque: 1 },
+        { id: 'm2', nome: 'Dragão', tipo: 'criatura', categoria: 'monstro', cor: '#c0392b', tamanho: 3, imagem_url: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/6.png', alcance_ataque: 3 },
+        { id: 'm3', nome: 'Esqueleto', tipo: 'criatura', categoria: 'monstro', cor: '#ecf0f1', tamanho: 1, imagem_url: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/104.png', alcance_ataque: 4 },
+        { id: 'm4', nome: 'Troll', tipo: 'criatura', categoria: 'monstro', cor: '#27ae60', tamanho: 2, imagem_url: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/68.png', alcance_ataque: 1 },
 
         // CENÁRIO
         { id: 'c1', nome: 'Árvore Grande', tipo: 'cenario', categoria: 'item', cor: '#2ecc71', tamanho: 2, imagem_url: 'img/arvore-1.png' },

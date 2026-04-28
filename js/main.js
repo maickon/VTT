@@ -147,8 +147,8 @@ async function startApp() {
                 tipo: document.getElementById('new-tipo').value,
                 categoria: document.getElementById('new-categoria').value,
                 tamanho: parseInt(document.getElementById('new-tamanho').value),
-                imagem_url: document.getElementById('new-imagem').value,
-                cor: document.getElementById('new-cor').value
+                alcance_ataque: parseInt(document.getElementById('new-alcance').value) || 1,
+                imagem_url: document.getElementById('new-imagem').value,                cor: document.getElementById('new-cor').value
             };
 
             if (!novo.nome || !novo.imagem_url) return customAlert("Preencha nome e URL da imagem!");

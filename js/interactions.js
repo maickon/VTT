@@ -77,15 +77,58 @@ function getParentGroup(object) {
     return null;
 }
 
+let hoverIndicator = null;
+let attackRangeIndicator = null;
+
+function showOccupiedSpace(obj) {
+    if (hoverIndicator) scene.remove(hoverIndicator);
+    if (!obj || obj.userData.tipo === "cenario") return;
+
+    const size = obj.userData.tamanho || 1;
+    const rangeSize = size * GRID_SIZE;
+    
+    const geo = new THREE.PlaneGeometry(rangeSize, rangeSize);
+    const mat = new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: true, opacity: 0.2, side: THREE.DoubleSide });
+    hoverIndicator = new THREE.Mesh(geo, mat);
+    hoverIndicator.rotation.x = -Math.PI / 2;
+    hoverIndicator.position.set(obj.position.x, 0.04, obj.position.z);
+    
+    scene.add(hoverIndicator);
+}
+
+function showAttackRange(obj) {
+    if (attackRangeIndicator) scene.remove(attackRangeIndicator);
+    
+    const reach = obj.userData.alcance_ataque || 1; 
+    const size = obj.userData.tamanho || 1;
+    const rangeSize = (size + reach * 2) * GRID_SIZE;
+    
+    const geo = new THREE.PlaneGeometry(rangeSize, rangeSize);
+    const mat = new THREE.MeshBasicMaterial({ color: 0xffff00, transparent: true, opacity: 0.15, side: THREE.DoubleSide });
+    attackRangeIndicator = new THREE.Mesh(geo, mat);
+    attackRangeIndicator.rotation.x = -Math.PI / 2;
+    attackRangeIndicator.position.set(obj.position.x, 0.03, obj.position.z);
+    
+    scene.add(attackRangeIndicator);
+
+    // Borda do alcance
+    const edges = new THREE.EdgesGeometry(geo);
+    const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xffff00 }));
+    line.rotation.x = -Math.PI / 2;
+    line.position.set(obj.position.x, 0.031, obj.position.z);
+    attackRangeIndicator.add(line);
+}
+
 export function initInteractions() {
     let startX = 0, startY = 0;
 
     window.addEventListener('contextmenu', (e) => e.preventDefault());
 
     window.addEventListener('pointerdown', (event) => {
-        if (event.target.closest('#ui-layer') || event.target.closest('#nota-modal') || event.target.closest('#context-menu')) return;
+        if (event.target.closest('#ui-layer') || event.target.closest('#nota-modal') || event.target.closest('#context-menu') || event.target.closest('#custom-modal-container')) return;
         
         contextMenu.classList.add('hidden');
+        if (attackRangeIndicator) { scene.remove(attackRangeIndicator); attackRangeIndicator = null; }
 
         startX = event.clientX;
         startY = event.clientY;
@@ -122,6 +165,7 @@ export function initInteractions() {
                 originalPosition.copy(draggedObject.position);
                 controls.enabled = false;
                 if (rangeIndicator) scene.remove(rangeIndicator);
+                if (hoverIndicator) scene.remove(hoverIndicator);
             }
         }
     });
@@ -143,19 +187,29 @@ export function initInteractions() {
             clearTimeout(pressTimer);
         }
 
-        if (!isDragging) return;
-
         mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
         mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
         raycaster.setFromCamera(mouse, camera);
-        const intersects = raycaster.intersectObject(ground);
 
-        if (intersects.length > 0) {
-            const point = intersects[0].point;
-            const snapX = Math.round(point.x / GRID_SIZE) * GRID_SIZE;
-            const snapZ = Math.round(point.z / GRID_SIZE) * GRID_SIZE;
-            draggedObject.position.set(snapX, 0, snapZ);
+        if (isDragging) {
+            const intersects = raycaster.intersectObject(ground);
+            if (intersects.length > 0) {
+                const point = intersects[0].point;
+                // Snap centralizado no quadrado
+                const snapX = Math.floor(point.x / GRID_SIZE) * GRID_SIZE + (GRID_SIZE / 2);
+                const snapZ = Math.floor(point.z / GRID_SIZE) * GRID_SIZE + (GRID_SIZE / 2);
+                draggedObject.position.set(snapX, 0, snapZ);
+            }
+        } else if (!isPlacingMode) {
+            // Lógica de Hover para mostrar espaço ocupado
+            const intersects = raycaster.intersectObjects(scene.children, true);
+            const target = intersects.find(obj => getParentGroup(obj.object));
+            if (target) {
+                showOccupiedSpace(getParentGroup(target.object));
+            } else if (hoverIndicator) {
+                scene.remove(hoverIndicator);
+                hoverIndicator = null;
+            }
         }
     });
 
@@ -173,13 +227,10 @@ export function initInteractions() {
             return;
         }
 
-        if (event.target.closest('#ui-layer') || event.target.closest('#nota-modal')) return;
+        if (event.target.closest('#ui-layer') || event.target.closest('#nota-modal') || event.target.closest('#custom-modal-container')) return;
 
         const distance = Math.hypot(event.clientX - startX, event.clientY - startY);
         if (distance > 10) return; 
-
-        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
         raycaster.setFromCamera(mouse, camera);
 
@@ -187,11 +238,12 @@ export function initInteractions() {
             const intersects = raycaster.intersectObject(ground);
             if (intersects.length > 0) {
                 const point = intersects[0].point;
-                const snapX = Math.round(point.x / GRID_SIZE) * GRID_SIZE;
-                const snapZ = Math.round(point.z / GRID_SIZE) * GRID_SIZE;
+                // Snap centralizado no quadrado
+                const snapX = Math.floor(point.x / GRID_SIZE) * GRID_SIZE + (GRID_SIZE / 2);
+                const snapZ = Math.floor(point.z / GRID_SIZE) * GRID_SIZE + (GRID_SIZE / 2);
                 
                 if (entityToPlace.tipo === "criatura" && checkCollision(null, snapX, snapZ, entityToPlace.tamanho)) {
-                    alert("Espaço ocupado!");
+                    window.customAlert("Espaço ocupado!");
                 } else {
                     addSpriteToBoard(snapX, snapZ, entityToPlace);
                 }
@@ -208,14 +260,18 @@ export function initInteractions() {
     });
 
     document.getElementById('menu-range').onclick = () => {
-        if (selectedObject) showRange(selectedObject);
+        if (selectedObject) showAttackRange(selectedObject);
         contextMenu.classList.add('hidden');
     };
 
-    document.getElementById('menu-delete').onclick = () => {
+    document.getElementById('menu-delete').onclick = async () => {
         if (selectedObject) {
-            scene.remove(selectedObject);
-            if (rangeIndicator) scene.remove(rangeIndicator);
+            const confirm = await window.customConfirm(`Excluir "${selectedObject.userData.nome}"?`);
+            if (confirm) {
+                scene.remove(selectedObject);
+                if (rangeIndicator) scene.remove(rangeIndicator);
+                if (attackRangeIndicator) scene.remove(attackRangeIndicator);
+            }
         }
         contextMenu.classList.add('hidden');
     };
