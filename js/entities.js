@@ -5,6 +5,10 @@ const textureLoader = new THREE.TextureLoader();
 textureLoader.setCrossOrigin('anonymous');
 
 export function addSpriteToBoard(x, z, dbData) {
+    if (!dbData) {
+        console.error("Tentativa de adicionar sprite com dados indefinidos em:", x, z);
+        return;
+    }
     const group = new THREE.Group();
 
     // 1. O TOKEN (Imagem Principal)

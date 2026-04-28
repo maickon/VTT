@@ -7,10 +7,12 @@ const mouse = new THREE.Vector2();
 
 export let isPlacingMode = false;
 export let entityToPlace = null;
+export let isSceneryLocked = true; // Travado por padrão
 
 // Funções seguras para atualizar as variáveis nos outros arquivos
 export function setPlacingMode(state) { isPlacingMode = state; }
 export function setEntity(entity) { entityToPlace = entity; }
+export function setSceneryLock(state) { isSceneryLocked = state; }
 export function getSelectedObject() { return selectedObject; }
 
 let isDragging = false;
@@ -108,8 +110,15 @@ export function initInteractions() {
             const target = intersects.find(obj => getParentGroup(obj.object));
 
             if (target) {
+                const group = getParentGroup(target.object);
+                
+                // Bloqueio de Cenário
+                if (isSceneryLocked && group.userData.tipo === "cenario") {
+                    return;
+                }
+
                 isDragging = true;
-                draggedObject = getParentGroup(target.object);
+                draggedObject = group;
                 originalPosition.copy(draggedObject.position);
                 controls.enabled = false;
                 if (rangeIndicator) scene.remove(rangeIndicator);

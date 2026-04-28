@@ -1,0 +1,12 @@
+ajuste o visual do biblioteca de elementos. Pois o formulário está saindo do
+   modal, organize os elementos de forma a caber numa estrutura de grid dos
+   elementos. Coloque os lementos um pouco menor para caber nem dentro do modal
+   e de forma que fique fácil de visualizar no mobile.O menu principal que
+   contém (mapa, lib e sistema) precisa poder ser expandido ou encolhido para o
+   usuário visualizar melhor o terreno. Precisa haver uma área para eu
+   visualizar todos os terrenos salvos dentro do sistema para eu poder escolher
+   e carregar.Coloque uma opção de porder travar/destravar todos os elementos
+   no mapa que sejam do tipo cenário, para que o usuário não consigo mudar a
+   posição deles (por padrão estes elementos já vem fixo no mapa sem poder
+   mudar sua posição). Faça cada tarefa em etapas pequenas e sempre me pergunte
+   se pode avançar para a próxima etapa.
