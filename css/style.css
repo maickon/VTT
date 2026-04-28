@@ -1,6 +1,6 @@
 body, html { 
     margin: 0; padding: 0; overflow: hidden; 
-    font-family: sans-serif; touch-action: none; /* Previne zoom de pinça no celular */
+    font-family: sans-serif; touch-action: none; 
 }
 #vtt-canvas { width: 100vw; height: 100vh; display: block; touch-action: none; }
 
@@ -56,10 +56,13 @@ body, html {
 
 .hidden { display: none !important; }
 
-#nota-modal { 
+/* Modals */
+#nota-modal, #library-modal, #maps-modal, #custom-modal-container { 
     position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; 
-    background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 100; 
+    background: rgba(0,0,0,0.95); display: flex; align-items: center; justify-content: center; z-index: 200; 
 }
+#custom-modal-container { z-index: 1000; background: rgba(0,0,0,0.8); }
+
 .modal-content { 
     background: #1e1e1e; border: 2px solid #d4af37; padding: 30px; border-radius: 15px; 
     width: 350px; color: #ecf0f1; box-shadow: 0 0 50px rgba(212, 175, 55, 0.2);
@@ -75,10 +78,6 @@ body, html {
     border-radius: 6px; font-weight: bold; cursor: pointer; 
 }
 
-#library-modal {
-    position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; 
-    background: rgba(0,0,0,0.95); display: flex; align-items: center; justify-content: center; z-index: 200; 
-}
 .library-content { 
     background: #1e1e1e; border: 2px solid #d4af37; border-radius: 15px; 
     width: 95%; max-width: 600px; height: 80vh; display: flex; flex-direction: column; color: white;
@@ -93,7 +92,7 @@ body, html {
 
 .library-grid { 
     flex: 1; overflow-y: auto; display: grid; 
-    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px; padding: 10px; 
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; padding: 15px; 
 }
 .library-item { 
     background: #2a2a2a; border: 1px solid #444; padding: 12px; border-radius: 10px; 
@@ -103,22 +102,6 @@ body, html {
 }
 .library-item:hover { border-color: #d4af37; background: #333; transform: translateY(-2px); }
 .library-item img { width: 45px; height: 45px; object-fit: contain; margin-bottom: 8px; border-radius: 5px; }
-
-/* Custom Modals */
-#custom-modal-container {
-    position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; 
-    background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000; 
-}
-.custom-modal { width: 300px; padding: 20px; text-align: center; }
-.custom-modal p { margin: 15px 0; font-size: 14px; color: #ccc; }
-.custom-modal input { 
-    width: 100%; box-sizing: border-box; padding: 10px; background: #121212; 
-    color: white; border: 1px solid #444; border-radius: 4px; margin-bottom: 15px;
-}
-.custom-modal-actions { display: flex; gap: 10px; justify-content: center; }
-.custom-modal-actions button { flex: 1; padding: 10px; border-radius: 4px; border: none; font-weight: bold; cursor: pointer; }
-#custom-modal-btn-ok { background: #d4af37; color: black; }
-#custom-modal-btn-cancel { background: #444; color: white; }
 .library-item span { display: block; font-size: 10px; font-weight: bold; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .library-item small { font-size: 9px; color: #888; }
 
@@ -131,6 +114,18 @@ body, html {
     width: 100%; box-sizing: border-box; padding: 8px; background: #121212; color: white; border: 1px solid #444; border-radius: 4px; font-size: 12px; 
 }
 #new-item-form button { grid-column: span 2; margin-top: 5px; padding: 10px; background: #27ae60; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
+
+/* Custom Modals Elements */
+.custom-modal { width: 300px; padding: 20px; text-align: center; }
+.custom-modal p { margin: 15px 0; font-size: 14px; color: #ccc; }
+.custom-modal input { 
+    width: 100%; box-sizing: border-box; padding: 10px; background: #121212; 
+    color: white; border: 1px solid #444; border-radius: 4px; margin-bottom: 15px;
+}
+.custom-modal-actions { display: flex; gap: 10px; justify-content: center; }
+.custom-modal-actions button { flex: 1; padding: 10px; border-radius: 4px; border: none; font-weight: bold; cursor: pointer; }
+#custom-modal-btn-ok { background: #d4af37; color: black; }
+#custom-modal-btn-cancel { background: #444; color: white; }
 
 /* Ajustes Mobile */
 @media (max-width: 600px) {
