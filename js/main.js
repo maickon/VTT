@@ -446,6 +446,20 @@ async function startApp() {
     };
     document.getElementById('btn-close-maps').onclick = () => mapsModal.classList.add('hidden');
     
+    // Fullscreen
+    const btnFs = document.getElementById('btn-fullscreen');
+    btnFs.onclick = () => {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(() => {});
+        } else {
+            document.exitFullscreen().catch(() => {});
+        }
+    };
+    document.addEventListener('fullscreenchange', () => {
+        btnFs.textContent = document.fullscreenElement ? '⊡' : '⛶';
+        btnFs.title = document.fullscreenElement ? 'Sair da Tela Cheia' : 'Tela Cheia';
+    });
+
     // Panel logic
     document.getElementById('btn-toggle-panel').onclick = () => {
         const p = document.getElementById('main-panel');

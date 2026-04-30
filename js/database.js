@@ -23,6 +23,26 @@ db.version(5).stores({
 
 export async function initDatabase() {
     const initialObjetos = [
+        
+        { id: 'pj1', nome: 'Telos 1', tipo: 'criatura', categoria: 'heroi', cor: '#000000', tamanho: 1, imagem_url: 'img/pj1.png', alcance_ataque: 1, deslocamento: 22 },
+        { id: 'pj2', nome: 'Telos 2', tipo: 'criatura', categoria: 'heroi', cor: '#000000', tamanho: 1, imagem_url: 'img/pj2.png', alcance_ataque: 1, deslocamento: 22 },
+        { id: 'pj3', nome: 'Adam 1', tipo: 'criatura', categoria: 'heroi', cor: '#FFF222', tamanho: 1, imagem_url: 'img/pj3.png', alcance_ataque: 1, deslocamento: 22 },
+        { id: 'pj17', nome: 'Adam 2', tipo: 'criatura', categoria: 'heroi', cor: '#FFF222', tamanho: 1, imagem_url: 'img/pj17.png', alcance_ataque: 1, deslocamento: 22 },
+        { id: 'pj4', nome: 'Pólux 1', tipo: 'criatura', categoria: 'heroi', cor: '#FFCC22', tamanho: 1, imagem_url: 'img/pj4.png', alcance_ataque: 1, deslocamento: 22 },
+        { id: 'pj18', nome: 'Pólux 2', tipo: 'criatura', categoria: 'heroi', cor: '#FFCC22', tamanho: 1, imagem_url: 'img/pj18.png', alcance_ataque: 1, deslocamento: 22 },
+        { id: 'pj5', nome: 'Chipanze 1', tipo: 'criatura', categoria: 'heroi', cor: '#00F212', tamanho: 1, imagem_url: 'img/pj5.png', alcance_ataque: 1, deslocamento: 22 },
+        { id: 'pj6', nome: 'Chipanze 2', tipo: 'criatura', categoria: 'heroi', cor: '#F112C2', tamanho: 1, imagem_url: 'img/pj6.png', alcance_ataque: 1, deslocamento: 22 },
+        { id: 'pj7', nome: 'Chipanze 3', tipo: 'criatura', categoria: 'heroi', cor: '#F002F2', tamanho: 1, imagem_url: 'img/pj7.png', alcance_ataque: 1, deslocamento: 22 },
+        { id: 'pj8', nome: 'Mano Jhow', tipo: 'criatura', categoria: 'heroi', cor: '#FFF222', tamanho: 1, imagem_url: 'img/pj8.png', alcance_ataque: 1, deslocamento: 22 },
+        { id: 'pj9', nome: 'Gayron', tipo: 'criatura', categoria: 'heroi', cor: '#FEE221', tamanho: 1, imagem_url: 'img/pj9.png', alcance_ataque: 1, deslocamento: 22 },
+        { id: 'pj10', nome: 'Black RX', tipo: 'criatura', categoria: 'heroi', cor: '#FFF212', tamanho: 1, imagem_url: 'img/pj10.png', alcance_ataque: 1, deslocamento: 22 },
+        { id: 'pj11', nome: 'Maratz', tipo: 'criatura', categoria: 'heroi', cor: '#FCF232', tamanho: 1, imagem_url: 'img/pj11.png', alcance_ataque: 1, deslocamento: 22 },
+        { id: 'pj12', nome: 'Arrocha Balança', tipo: 'criatura', categoria: 'heroi', cor: '#FFA242', tamanho: 1, imagem_url: 'img/pj12.png', alcance_ataque: 1, deslocamento: 22 },
+        { id: 'pj13', nome: 'Tora de Martelo', tipo: 'criatura', categoria: 'heroi', cor: '#FAF252', tamanho: 1, imagem_url: 'img/pj13.png', alcance_ataque: 1, deslocamento: 22 },
+        { id: 'pj14', nome: 'Red Bull', tipo: 'criatura', categoria: 'heroi', cor: '#FAF622', tamanho: 1, imagem_url: 'img/pj14.png', alcance_ataque: 1, deslocamento: 22 },
+        { id: 'pj15', nome: 'Efestos', tipo: 'criatura', categoria: 'heroi', cor: '#AFF722', tamanho: 1, imagem_url: 'img/pj15.png', alcance_ataque: 1, deslocamento: 999 },
+        { id: 'pj16', nome: 'Efíade', tipo: 'criatura', categoria: 'heroi', cor: '#AFF7AA', tamanho: 1, imagem_url: 'img/pj16.png', alcance_ataque: 1, deslocamento: 12 },
+        
         { id: 'h1', nome: 'Anão', tipo: 'criatura', categoria: 'heroi', cor: '#3498db', tamanho: 1, imagem_url: 'img/player1.png', alcance_ataque: 3, deslocamento: 9 },
         { id: 'h2', nome: 'Guerreiro', tipo: 'criatura', categoria: 'heroi', cor: '#9b59b6', tamanho: 1, imagem_url: 'img/player2.webp', alcance_ataque: 3, deslocamento: 9 },
         { id: 'h3', nome: 'Cavaleiro', tipo: 'criatura', categoria: 'heroi', cor: '#2ecc71', tamanho: 1, imagem_url: 'img/player3.webp', alcance_ataque: 3, deslocamento: 9 },
@@ -32,7 +52,9 @@ export async function initDatabase() {
         { id: 'h7', nome: 'Paladino', tipo: 'criatura', categoria: 'heroi', cor: '#f1c40f', tamanho: 1, imagem_url: 'img/player7.png', alcance_ataque: 3, deslocamento: 9 },
         { id: 'h8', nome: 'Assassino', tipo: 'criatura', categoria: 'heroi', cor: '#f1c40f', tamanho: 1, imagem_url: 'img/player8.png', alcance_ataque: 3, deslocamento: 9 },
         { id: 'h9', nome: 'Cavaleiro', tipo: 'criatura', categoria: 'heroi', cor: '#f1caa2', tamanho: 1, imagem_url: 'img/cavaleiro.png', alcance_ataque: 3, deslocamento: 9 },
-        
+
+        { id: 'd1', nome: 'Dragrão da Forja', tipo: 'criatura', categoria: 'monstro', cor: '#e74c3c', tamanho: 8, imagem_url: 'img/d1.png', alcance_ataque: 64, deslocamento: 42 },
+        { id: 'd2', nome: 'DGolem de Aço', tipo: 'criatura', categoria: 'monstro', cor: '#e74c3c', tamanho: 8, imagem_url: 'img/d2.png', alcance_ataque: 64, deslocamento: 42 },
         { id: 'm1', nome: 'Orc', tipo: 'criatura', categoria: 'monstro', cor: '#e74c3c', tamanho: 1, imagem_url: 'img/orc1.gif', alcance_ataque: 1, deslocamento: 6 },
         { id: 'm2', nome: 'Dragao Brilhoso', tipo: 'criatura', categoria: 'monstro', cor: '#c0392b', tamanho: 5, imagem_url: 'img/dragon1.png', alcance_ataque: 8, deslocamento: 12 },
         { id: 'm3', nome: 'Dragao Azul', tipo: 'criatura', categoria: 'monstro', cor: '#c0392b', tamanho: 5, imagem_url: 'img/dragon2.png', alcance_ataque: 8, deslocamento: 12 },
@@ -67,8 +89,8 @@ export async function initDatabase() {
         { id: 'c7', nome: 'Pedra 2', tipo: 'cenario', categoria: 'item', cor: '#95a5a6', tamanho: 2, imagem_url: 'img/pedra2.png' },
         { id: 'c8', nome: 'Pedra 3', tipo: 'cenario', categoria: 'item', cor: '#95a5a6', tamanho: 3, imagem_url: 'img/pedra3.png' },
         { id: 'c9', nome: 'Baú', tipo: 'cenario', categoria: 'item', cor: '#f39c12', tamanho: 1, imagem_url: 'img/bau.png' },
-        { id: 'c10', nome: 'Pedra Nevada 1', tipo: 'cenario', categoria: 'item', cor: '#FFFFFF', tamanho: 2, imagem_url: 'img/pedra-nevada1.webp' },
-        { id: 'c11', nome: 'Pedra Nevada 2', tipo: 'cenario', categoria: 'item', cor: '#FFFFFF', tamanho: 2, imagem_url: 'img/pedra-nevada3.webp' },
+        { id: 'c10', nome: 'Pedra Nevada 1', tipo: 'cenario', categoria: 'item', cor: '#FFFFFF', tamanho: 2, imagem_url: 'img/pedra-nevada1.png' },
+        { id: 'c11', nome: 'Pedra Nevada 2', tipo: 'cenario', categoria: 'item', cor: '#FFFFFF', tamanho: 2, imagem_url: 'img/pedra-nevada3.png' },
         { id: 'c12', nome: 'Ávore Nevada 1', tipo: 'cenario', categoria: 'item', cor: '#FFFFFF', tamanho: 2, imagem_url: 'img/snow-tree1.webp' },
         { id: 'c13', nome: 'Ávore Nevada 2', tipo: 'cenario', categoria: 'item', cor: '#FFFFFF', tamanho: 2, imagem_url: 'img/snow-tree2.png' },
         { id: 'c14', nome: 'Ávore Nevada 3', tipo: 'cenario', categoria: 'item', cor: '#FFFFFF', tamanho: 2, imagem_url: 'img/snow-tree3.png' },
@@ -78,6 +100,10 @@ export async function initDatabase() {
         { id: 'c18', nome: 'Buraco Grande 2', tipo: 'cenario', categoria: 'item', cor: '#FFFFFF', tamanho: 6, imagem_url: 'img/lava-area2.png', modo_chao: true },
         { id: 'c19', nome: 'Buraco Médio 3', tipo: 'cenario', categoria: 'item', cor: '#FFFFFF', tamanho: 3, imagem_url: 'img/lava-area3.png', modo_chao: true },
         { id: 'c20', nome: 'Buraco Grande 3', tipo: 'cenario', categoria: 'item', cor: '#FFFFFF', tamanho: 6, imagem_url: 'img/lava-area3.png', modo_chao: true },
+
+        { id: 'c21', nome: 'Lago 1', tipo: 'cenario', categoria: 'item', cor: '#0000FF', tamanho: 6, imagem_url: 'img/agua-area1.png', modo_chao: true },
+        { id: 'c22', nome: 'Lago 2', tipo: 'cenario', categoria: 'item', cor: '#0000FF', tamanho: 6, imagem_url: 'img/agua-area2.png', modo_chao: true },
+        { id: 'c23', nome: 'Mato 1', tipo: 'cenario', categoria: 'item', cor: '#FFFFFF', tamanho: 6, imagem_url: 'img/mato-area1.png', modo_chao: true },
     ];
 
     const initialTerrenos = [
