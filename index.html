@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>VTT 3D Simples</title>
+    <title>VTT Greco | Mesa RPG 3D</title>
     <link rel="stylesheet" href="css/style.css">
     
     <script src="https://unpkg.com/dexie/dist/dexie.js"></script>
@@ -27,10 +27,10 @@
             <div class="panel-header">
                 <div class="panel-tabs">
                     <button class="main-tab-btn active" data-main-tab="mapa">Mapa</button>
-                    <button class="main-tab-btn" data-main-tab="lib">Lib</button>
+                    <button class="main-tab-btn" data-main-tab="lib">Biblioteca</button>
                     <button class="main-tab-btn" data-main-tab="sys">Sistema</button>
                 </div>
-                <button id="btn-toggle-panel" title="Recolher/Expandir">_</button>
+                <button id="btn-toggle-panel" title="Recolher/Expandir" aria-label="Recolher ou expandir painel">_</button>
             </div>
 
             <div id="panel-body">
@@ -71,6 +71,14 @@
                     <option value="night">Noite</option>
                 </select>
 
+                <label>Fundo do Horizonte:</label>
+                <div style="display: flex; gap: 5px;">
+                    <input type="text" id="input-bg-url" placeholder="URL da imagem">
+                    <button id="btn-apply-bg" style="width: 60px; margin: 0; padding: 0;">Ok</button>
+                </div>
+
+                <button id="btn-open-assets" style="margin-top: 15px; background: #e67e22;">Gerenciar Terrenos/Modelos</button>
+
                 <div style="display: flex; align-items: center; gap: 8px; margin-top: 10px;">
                     <input type="checkbox" id="check-lock-scenery" checked style="width: auto; margin: 0;">
                     <label style="margin: 0; cursor: pointer;" for="check-lock-scenery">Travar Cenários</label>
@@ -97,10 +105,43 @@
         <div class="library-content">
             <div class="library-header">
                 <h2>Meus Mapas Salvos</h2>
-                <button id="btn-close-maps">X</button>
+                <button id="btn-close-maps" aria-label="Fechar mapas">X</button>
             </div>
             <div id="maps-grid" class="library-grid">
                 <!-- Mapas carregados via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE ASSETS (TERRENOS E MODELOS) -->
+    <div id="assets-modal" class="hidden">
+        <div class="library-content">
+            <div class="library-header">
+                <h2>Gerenciar Terrenos e Modelos</h2>
+                <button id="btn-close-assets" class="btn-close-modal" aria-label="Fechar assets">X</button>
+            </div>
+            <div class="library-tabs">
+                <button class="tab-btn-asset active" data-asset-tab="terreno">Terrenos</button>
+                <button class="tab-btn-asset" data-asset-tab="modelo">Modelos</button>
+            </div>
+            <div id="assets-grid" class="library-grid">
+                <!-- Assets carregados via JS -->
+            </div>
+            <div id="new-asset-form" class="hidden asset-form-container">
+                <h3 id="asset-form-title">Novo Terreno</h3>
+                <input type="hidden" id="edit-asset-id">
+                <label>Nome:</label>
+                <input type="text" id="new-asset-nome">
+                <label id="label-asset-url">URL da Imagem:</label>
+                <input type="text" id="new-asset-url">
+                <div id="container-asset-bg" class="hidden">
+                    <label>URL Fundo do Horizonte:</label>
+                    <input type="text" id="new-asset-bg">
+                </div>
+                <button id="btn-create-asset" style="background: #27ae60; margin-top: 10px;">Salvar</button>
+            </div>
+            <div style="padding: 10px; border-top: 1px solid #444;">
+                <button id="btn-show-asset-form" style="background: #27ae60;">+ Adicionar Novo</button>
             </div>
         </div>
     </div>
@@ -110,7 +151,7 @@
         <div class="library-content">
             <div class="library-header">
                 <h2>Biblioteca de Elementos</h2>
-                <button id="btn-close-library">X</button>
+                <button id="btn-close-library" aria-label="Fechar biblioteca">X</button>
             </div>
             
             <div class="library-tabs">
@@ -126,20 +167,38 @@
 
             <div id="new-item-form" class="hidden">
                 <h3>Cadastrar Novo Elemento</h3>
-                <input type="text" id="new-nome" placeholder="Nome do Personagem/Objeto">
+                
+                <label for="new-nome">Nome do Elemento:</label>
+                <input type="text" id="new-nome" placeholder="Ex: Guerreiro, Árvore...">
+                
+                <label for="new-tipo">Tipo de Elemento:</label>
                 <select id="new-tipo">
-                    <option value="criatura">Criatura (Bloqueável)</option>
-                    <option value="cenario">Cenário (Bloqueia)</option>
+                    <option value="criatura">Criatura (Personagens)</option>
+                    <option value="cenario">Cenário (Objetos)</option>
                 </select>
+                
+                <label for="new-categoria">Categoria:</label>
                 <select id="new-categoria">
                     <option value="heroi">Herói</option>
                     <option value="monstro">Monstro</option>
-                    <option value="item">Item de Cenário</option>
+                    <option value="item">Cenário</option>
                 </select>
-                <input type="number" id="new-tamanho" placeholder="Tamanho (Quadrados)" value="1">
-                <input type="number" id="new-alcance" placeholder="Alcance de Ataque" value="1">
-                <input type="text" id="new-imagem" placeholder="URL da Imagem">
+                
+                <label for="new-tamanho">Tamanho (em quadrados):</label>
+                <input type="number" id="new-tamanho" value="1">
+                
+                <label for="new-alcance">Alcance de Ataque (quadrados):</label>
+                <input type="number" id="new-alcance" value="1">
+
+                <label for="new-deslocamento">Deslocamento (quadrados):</label>
+                <input type="number" id="new-deslocamento" value="6">
+                
+                <label for="new-imagem">URL da Imagem:</label>
+                <input type="text" id="new-imagem" placeholder="https://...">
+                
+                <label for="new-cor">Cor da Base:</label>
                 <input type="color" id="new-cor" value="#d4af37">
+                
                 <button id="btn-create-item">Salvar na Biblioteca</button>
             </div>
         </div>
@@ -149,25 +208,16 @@
         <ul>
             <li id="menu-range">Mostrar Alcance</li>
             <li class="menu-submenu">
-                Condições
+                Condições >
                 <ul class="submenu">
-                    <li onclick="toggleStatus('blood')">🔴 Sangrando</li>
-                    <li onclick="toggleStatus('poison')">🟢 Envenenado</li>
-                    <li onclick="toggleStatus('shield')">🔵 Escudo</li>
-                    <li onclick="toggleStatus('stun')">🟡 Atordoado</li>
+                    <li onclick="toggleStatus('blood')">Sangramento</li>
+                    <li onclick="toggleStatus('poison')">Veneno</li>
+                    <li onclick="toggleStatus('shield')">Escudo</li>
+                    <li onclick="toggleStatus('stun')">Atordoado</li>
                 </ul>
             </li>
             <li id="menu-delete" style="color: #ff4444;">Excluir</li>
         </ul>
-    </div>
-
-    <!-- MODAL DE NOTAS -->
-    <div id="nota-modal" class="hidden">
-        <div class="modal-content">
-            <h3 id="nota-titulo">Ficha do Personagem</h3>
-            <textarea id="nota-texto" rows="5" placeholder="HP, Condições, Notas..."></textarea>
-            <button id="btn-fechar-nota" style="background: #c0392b;">Fechar</button>
-        </div>
     </div>
 
     <!-- MODAIS GENÉRICOS (CUSTOM) -->
