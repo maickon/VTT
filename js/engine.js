@@ -10,6 +10,10 @@ const GRID_SIZE = 2;
 const animatedGifTextures = new Set();
 
 let horizonMesh;
+let gridColor = '#000000';
+let gridVisible = true;
+let currentMapW = 25;
+let currentMapH = 25;
 
 function isGif(url) {
     return typeof url === 'string' && url.split('?')[0].toLowerCase().endsWith('.gif');
@@ -33,6 +37,12 @@ function loadGifTexture(url, onLoad, onError) {
     image.crossOrigin = 'anonymous';
 
     image.onload = () => {
+        if (!image.parentNode) {
+            // position:fixed no viewport mas invisível — garante que o browser anime o GIF
+            image.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;pointer-events:none;z-index:-1;';
+            document.body.appendChild(image);
+        }
+
         const canvas = document.createElement('canvas');
         canvas.width = image.naturalWidth || 1;
         canvas.height = image.naturalHeight || 1;
@@ -75,7 +85,8 @@ export function updateBackground(url) {
     }
     if (!url) return;
 
-    const geo = new THREE.SphereGeometry(500, 64, 32);
+    // Esfera grande renderizada por dentro: cobre 360° completo sem distorção de polo
+    const geo = new THREE.SphereGeometry(500, 128, 64);
     const mat = new THREE.MeshBasicMaterial({
         side: THREE.BackSide,
         transparent: true,
@@ -85,7 +96,11 @@ export function updateBackground(url) {
     loadTexture(
         url,
         (texture) => {
-            texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+            // Sem tiling — qualidade máxima, imagem esticada para cobrir toda a esfera
+            texture.wrapS = THREE.ClampToEdgeWrapping;
+            texture.wrapT = THREE.ClampToEdgeWrapping;
+            texture.repeat.set(1, 1);
+            texture.needsUpdate = true;
             mat.map = texture;
             mat.needsUpdate = true;
         },
@@ -125,25 +140,44 @@ export function updateEnvironment(time) {
     }
 }
 
+function rebuildGrid(wDivs, hDivs) {
+    if (gridHelper) scene.remove(gridHelper);
+
+    let maxDivs = Math.max(wDivs, hDivs);
+    if (maxDivs % 2 !== 0) maxDivs++;
+
+    const colorHex = parseInt(gridColor.replace('#', ''), 16);
+    gridHelper = new THREE.GridHelper(maxDivs * GRID_SIZE, maxDivs, colorHex, colorHex);
+    gridHelper.position.set(0, 0.01, 0);
+    gridHelper.material.opacity = 0.25;
+    gridHelper.material.transparent = true;
+    gridHelper.visible = gridVisible;
+    scene.add(gridHelper);
+}
+
 export function updateMapSize(width, height) {
     const wDivs = parseInt(width);
     const hDivs = parseInt(height);
     const w = wDivs * GRID_SIZE;
     const h = hDivs * GRID_SIZE;
 
+    currentMapW = wDivs;
+    currentMapH = hDivs;
+
     ground.geometry.dispose();
     ground.geometry = new THREE.PlaneGeometry(w, h);
 
-    if (gridHelper) scene.remove(gridHelper);
+    rebuildGrid(wDivs, hDivs);
+}
 
-    let maxDivs = Math.max(wDivs, hDivs);
-    if (maxDivs % 2 !== 0) maxDivs++;
+export function updateGridStyle(color, visible) {
+    if (color !== undefined) gridColor = color;
+    if (visible !== undefined) gridVisible = visible;
 
-    gridHelper = new THREE.GridHelper(maxDivs * GRID_SIZE, maxDivs, 0x000000, 0x000000);
-    gridHelper.position.set(0, 0.01, 0);
-    gridHelper.material.opacity = 0.2;
-    gridHelper.material.transparent = true;
-    scene.add(gridHelper);
+    if (gridHelper) {
+        gridHelper.visible = gridVisible;
+        if (color !== undefined) rebuildGrid(currentMapW, currentMapH);
+    }
 }
 
 export function updateTerrainTexture(type, customUrl = null) {
@@ -211,11 +245,7 @@ export function initEngine() {
     ground.rotation.x = -Math.PI / 2;
     scene.add(ground);
 
-    gridHelper = new THREE.GridHelper(52, 26, 0x000000, 0x000000);
-    gridHelper.material.opacity = 0.2;
-    gridHelper.material.transparent = true;
-    gridHelper.position.set(0, 0.01, 0);
-    scene.add(gridHelper);
+    rebuildGrid(25, 25);
 
     function animate() {
         requestAnimationFrame(animate);

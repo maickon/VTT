@@ -4,7 +4,7 @@ import {
     getAllTerrenos, addTerreno, deleteTerreno,
     getAllModelos, addModelo, deleteModelo, getModelo
 } from './database.js';
-import { initEngine, ground, updateEnvironment, updateMapSize, updateTerrainTexture, updateBackground, scene } from './engine.js';
+import { initEngine, ground, updateEnvironment, updateMapSize, updateTerrainTexture, updateBackground, updateGridStyle, scene } from './engine.js';
 import { initInteractions, setPlacingMode, setEntity, getSelectedObject, setSceneryLock } from './interactions.js';
 import { addSpriteToBoard, toggleStatusToGroup } from './entities.js';
 
@@ -109,7 +109,8 @@ async function startApp() {
             div.style.position = 'relative';
             let delBtn = String(item.id).startsWith('custom_') ? `<button class="btn-delete-item" style="position: absolute; top: 5px; right: 5px; background: #c0392b; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 10px; cursor: pointer;">X</button>` : '';
             const deslocamentoInfo = item.tipo === 'criatura' ? ` | ${item.deslocamento || 6}q` : '';
-            div.innerHTML = `${delBtn}<img src="${item.imagem_url}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1695/1695213.png'"><span>${item.nome}</span><small>${item.tamanho}x${item.tamanho}${deslocamentoInfo}</small>`;
+            const chaoTag = item.modo_chao ? `<span style="font-size:9px; background:#8e44ad; color:white; border-radius:3px; padding:1px 4px; margin-top:2px; display:inline-block;">CHÃO</span>` : '';
+            div.innerHTML = `${delBtn}<img src="${item.imagem_url}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1695/1695213.png'"><span>${item.nome}</span><small>${item.tamanho}x${item.tamanho}${deslocamentoInfo}</small>${chaoTag}`;
             div.onclick = async (e) => {
                 if (e.target.classList.contains('btn-delete-item')) {
                     if (await customConfirm(`Excluir "${item.nome}"?`)) { await deleteObjeto(item.id); renderLibrary(); }
@@ -155,12 +156,14 @@ async function startApp() {
             alcance_ataque: parseInt(document.getElementById('new-alcance').value) || 1,
             deslocamento: parseInt(document.getElementById('new-deslocamento').value) || 6,
             imagem_url: document.getElementById('new-imagem').value,
-            cor: document.getElementById('new-cor').value
+            cor: document.getElementById('new-cor').value,
+            modo_chao: document.getElementById('new-modo-chao').checked
         };
         if (novo.tipo !== 'criatura' && novo.categoria === 'item') novo.deslocamento = 0;
         if (!novo.nome || !novo.imagem_url) return customAlert("Dados incompletos!");
         await addNovoObjeto(novo);
         await customAlert("Salvo!");
+        document.getElementById('new-modo-chao').checked = false;
         document.querySelector(`[data-tab="${novo.categoria}"]`).click();
     };
 
@@ -189,10 +192,32 @@ async function startApp() {
     });
 
     document.getElementById('btn-apply-texture').onclick = () => updateTerrainTexture('custom', document.getElementById('input-terrain-url').value);
-    document.getElementById('btn-apply-size').onclick = () => updateMapSize(document.getElementById('map-width').value, document.getElementById('map-height').value);
+
+    function updateSizeMeters() {
+        const w = parseInt(document.getElementById('map-width').value) || 25;
+        const h = parseInt(document.getElementById('map-height').value) || 25;
+        const label = document.getElementById('map-size-meters');
+        if (label) label.textContent = `${(w * 1.5).toFixed(1).replace('.', ',')}m × ${(h * 1.5).toFixed(1).replace('.', ',')}m`;
+    }
+    document.getElementById('map-width').addEventListener('input', updateSizeMeters);
+    document.getElementById('map-height').addEventListener('input', updateSizeMeters);
+    updateSizeMeters();
+
+    document.getElementById('btn-apply-size').onclick = () => {
+        updateMapSize(document.getElementById('map-width').value, document.getElementById('map-height').value);
+        updateSizeMeters();
+    };
+
     document.getElementById('select-time').addEventListener('change', (e) => updateEnvironment(e.target.value));
-    
+
     document.getElementById('btn-apply-bg').onclick = () => updateBackground(document.getElementById('input-bg-url').value);
+
+    document.getElementById('grid-color-picker').addEventListener('input', (e) => {
+        updateGridStyle(e.target.value, undefined);
+    });
+    document.getElementById('grid-visible-check').addEventListener('change', (e) => {
+        updateGridStyle(undefined, e.target.checked);
+    });
 
     document.getElementById('check-lock-scenery').addEventListener('change', (e) => {
         setSceneryLock(e.target.checked);
@@ -359,7 +384,8 @@ async function startApp() {
         document.getElementById('map-width').value = mapData.sizeW || 25;
         document.getElementById('map-height').value = mapData.sizeH || 25;
         document.getElementById('input-bg-url').value = mapData.bgUrl || '';
-        
+        updateSizeMeters();
+
         const terrainOption = document.getElementById('select-terrain').selectedOptions[0];
         updateTerrainTexture(mapData.terrain, terrainOption?.dataset?.url);
         updateEnvironment(mapData.time);
@@ -378,22 +404,45 @@ async function startApp() {
         if (nome) { await addMapa({ nome, data: getCurrentMapData() }); await customAlert("Salvo!"); }
     };
 
-    document.getElementById('btn-open-maps').onclick = async () => {
-        mapsModal.classList.remove('hidden');
+    async function renderMaps() {
         mapsGrid.innerHTML = '';
         const mapas = await getAllMapas();
-        if (mapas.length === 0) mapsGrid.innerHTML = '<p style="grid-column: span 3; text-align: center; color: #888; padding: 20px;">Vazio.</p>';
+        if (mapas.length === 0) {
+            mapsGrid.innerHTML = '<p style="grid-column: span 3; text-align: center; color: #888; padding: 20px;">Vazio.</p>';
+            return;
+        }
         mapas.forEach(mapa => {
+            const sizeW = mapa.data?.sizeW || 25;
+            const sizeH = mapa.data?.sizeH || 25;
+            const metrosW = (sizeW * 1.5).toFixed(1).replace('.', ',');
+            const metrosH = (sizeH * 1.5).toFixed(1).replace('.', ',');
             const div = document.createElement('div');
             div.className = 'library-item';
-            div.innerHTML = `<div style="font-size:24px;">🗺️</div><span>${mapa.nome}</span><button class="btn-delete-map" style="background:#c0392b; color:white; border:none; border-radius:4px; padding:4px 8px; font-size:10px; margin-top:10px; width:100%;">Excluir</button>`;
-            div.onclick = async (e) => {
-                if (e.target.classList.contains('btn-delete-map')) {
-                    if (await customConfirm("Excluir?")) { await deleteMapa(mapa.id); div.remove(); }
-                } else { loadMap(mapa.data); mapsModal.classList.add('hidden'); }
+            div.style.cssText = 'position:relative; text-align:center;';
+            div.innerHTML = `
+                <div style="font-size:28px; margin-bottom:4px;">🗺️</div>
+                <span style="display:block; margin-bottom:4px;">${mapa.nome}</span>
+                <small style="color:#aaa; display:block; margin-bottom:8px;">${metrosW}m × ${metrosH}m</small>
+                <button class="btn-open-map" style="background:#2980b9; color:white; border:none; border-radius:4px; padding:5px 10px; font-size:12px; cursor:pointer; width:100%; margin-bottom:4px;">Abrir</button>
+                <button class="btn-delete-map" style="background:transparent; color:#c0392b; border:1px solid #c0392b; border-radius:4px; padding:3px 8px; font-size:10px; cursor:pointer; width:100%;">Excluir</button>
+            `;
+            div.querySelector('.btn-open-map').onclick = () => {
+                loadMap(mapa.data);
+                mapsModal.classList.add('hidden');
+            };
+            div.querySelector('.btn-delete-map').onclick = async () => {
+                if (await customConfirm(`Excluir "${mapa.nome}"?`)) {
+                    await deleteMapa(mapa.id);
+                    div.remove();
+                }
             };
             mapsGrid.appendChild(div);
         });
+    }
+
+    document.getElementById('btn-open-maps').onclick = async () => {
+        mapsModal.classList.remove('hidden');
+        await renderMaps();
     };
     document.getElementById('btn-close-maps').onclick = () => mapsModal.classList.add('hidden');
     

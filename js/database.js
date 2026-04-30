@@ -14,6 +14,13 @@ db.version(4).stores({
     modelos: 'id, nome, data'
 });
 
+db.version(5).stores({
+    objetos: 'id, nome, tipo, cor, tamanho, imagem_url, categoria, alcance_ataque, deslocamento, modo_chao',
+    mapas: '++id, nome, data',
+    terrenos: 'id, nome, url',
+    modelos: 'id, nome, data'
+});
+
 export async function initDatabase() {
     const initialObjetos = [
         { id: 'h1', nome: 'Anão', tipo: 'criatura', categoria: 'heroi', cor: '#3498db', tamanho: 1, imagem_url: 'img/player1.png', alcance_ataque: 3, deslocamento: 9 },
@@ -65,7 +72,13 @@ export async function initDatabase() {
         { id: 'c12', nome: 'Ávore Nevada 1', tipo: 'cenario', categoria: 'item', cor: '#FFFFFF', tamanho: 2, imagem_url: 'img/snow-tree1.webp' },
         { id: 'c13', nome: 'Ávore Nevada 2', tipo: 'cenario', categoria: 'item', cor: '#FFFFFF', tamanho: 2, imagem_url: 'img/snow-tree2.png' },
         { id: 'c14', nome: 'Ávore Nevada 3', tipo: 'cenario', categoria: 'item', cor: '#FFFFFF', tamanho: 2, imagem_url: 'img/snow-tree3.png' },
-        { id: 'c15', nome: 'Ávore Nevada 4', tipo: 'cenario', categoria: 'item', cor: '#FFFFFF', tamanho: 2, imagem_url: 'img/snow-tree4.png' },    ];
+        { id: 'c15', nome: 'Ávore Nevada 4', tipo: 'cenario', categoria: 'item', cor: '#FFFFFF', tamanho: 2, imagem_url: 'img/snow-tree4.png' }, 
+        { id: 'c16', nome: 'Buraco 1', tipo: 'cenario', categoria: 'item', cor: '#FFFFFF', tamanho: 3, imagem_url: 'img/lava-area1.png', modo_chao: true },
+        { id: 'c17', nome: 'Buraco Médio 2', tipo: 'cenario', categoria: 'item', cor: '#FFFFFF', tamanho: 3, imagem_url: 'img/lava-area2.png', modo_chao: true },
+        { id: 'c18', nome: 'Buraco Grande 2', tipo: 'cenario', categoria: 'item', cor: '#FFFFFF', tamanho: 6, imagem_url: 'img/lava-area2.png', modo_chao: true },
+        { id: 'c19', nome: 'Buraco Médio 3', tipo: 'cenario', categoria: 'item', cor: '#FFFFFF', tamanho: 3, imagem_url: 'img/lava-area3.png', modo_chao: true },
+        { id: 'c20', nome: 'Buraco Grande 3', tipo: 'cenario', categoria: 'item', cor: '#FFFFFF', tamanho: 6, imagem_url: 'img/lava-area3.png', modo_chao: true },
+    ];
 
     const initialTerrenos = [
         { id: 'grass1', nome: 'Grama 1', url: 'img/grama1.jpg' },

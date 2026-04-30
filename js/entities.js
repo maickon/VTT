@@ -33,6 +33,12 @@ function loadGifTexture(url, onLoad, onError) {
     image.crossOrigin = 'anonymous';
 
     image.onload = () => {
+        if (!image.parentNode) {
+            // position:fixed no viewport mas invisível — garante que o browser anime o GIF
+            image.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;pointer-events:none;z-index:-1;';
+            document.body.appendChild(image);
+        }
+
         const canvas = document.createElement('canvas');
         canvas.width = image.naturalWidth || 1;
         canvas.height = image.naturalHeight || 1;
@@ -56,6 +62,7 @@ export function addSpriteToBoard(x, z, dbData) {
     }
     const group = new THREE.Group();
     const needsMovement = dbData.tipo === 'criatura' || dbData.categoria === 'heroi' || dbData.categoria === 'monstro';
+    const modoChao = !!dbData.modo_chao;
 
     const imgFallback = "https://cdn-icons-png.flaticon.com/512/1695/1695213.png";
     const imgUrl = dbData.imagem_url || imgFallback;
@@ -64,8 +71,9 @@ export function addSpriteToBoard(x, z, dbData) {
     const geo = new THREE.PlaneGeometry(visualSize, visualSize);
     const material = new THREE.MeshBasicMaterial({
         transparent: true,
-        alphaTest: 0.5,
-        side: THREE.DoubleSide
+        alphaTest: 0.1,
+        side: THREE.DoubleSide,
+        depthWrite: !modoChao
     });
 
     const applyTexture = (loadedTexture) => {
@@ -100,15 +108,29 @@ export function addSpriteToBoard(x, z, dbData) {
     }
 
     const tokenMesh = new THREE.Mesh(geo, material);
-    tokenMesh.position.y = visualSize / 2;
     tokenMesh.name = "token_mesh";
+
+    if (modoChao) {
+        // Modo chão: elemento plano integrado ao terreno (representar buracos, marcações)
+        tokenMesh.rotation.x = -Math.PI / 2;
+        tokenMesh.position.y = 0.03;
+        material.polygonOffset = true;
+        material.polygonOffsetFactor = -1;
+        material.polygonOffsetUnits = -1;
+    } else {
+        // Modo normal: elemento em pé no campo com billboard
+        tokenMesh.position.y = visualSize / 2;
+        tokenMesh.onBeforeRender = (renderer, scene, camera) => {
+            tokenMesh.quaternion.copy(camera.quaternion);
+        };
+    }
 
     const baseGeo = new THREE.RingGeometry((visualSize / 2) * 0.8, visualSize / 2, 32);
     const baseMat = new THREE.MeshBasicMaterial({
         color: dbData.cor || 0xd4af37,
         side: THREE.DoubleSide,
         transparent: true,
-        opacity: 0.6
+        opacity: modoChao ? 0 : 0.6
     });
     const base = new THREE.Mesh(baseGeo, baseMat);
     base.rotation.x = -Math.PI / 2;
@@ -130,15 +152,11 @@ export function addSpriteToBoard(x, z, dbData) {
     const nameMat = new THREE.SpriteMaterial({ map: nameTex, transparent: true });
     const nameSprite = new THREE.Sprite(nameMat);
     nameSprite.scale.set(3, 0.75, 1);
-    nameSprite.position.y = visualSize + 0.8;
+    nameSprite.position.y = modoChao ? 1.2 : visualSize + 0.8;
 
     group.add(tokenMesh);
     group.add(base);
     group.add(nameSprite);
-
-    tokenMesh.onBeforeRender = (renderer, scene, camera) => {
-        tokenMesh.quaternion.copy(camera.quaternion);
-    };
 
     group.position.set(x, 0, z);
     group.userData = {
@@ -148,7 +166,8 @@ export function addSpriteToBoard(x, z, dbData) {
         categoria: dbData.categoria,
         tamanho: dbData.tamanho || 1,
         alcance_ataque: dbData.alcance_ataque || 1,
-        deslocamento: dbData.deslocamento || (needsMovement ? 6 : 0)
+        deslocamento: dbData.deslocamento || (needsMovement ? 6 : 0),
+        modo_chao: modoChao
     };
 
     group.type = "SpriteGroup";

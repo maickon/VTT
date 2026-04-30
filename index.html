@@ -63,6 +63,7 @@
                     <input type="number" id="map-height" value="25">
                 </div>
                 <button id="btn-apply-size">Redimensionar</button>
+                <small id="map-size-meters" style="color:#aaa; display:block; margin-top:2px;">37,5m × 37,5m</small>
                 
                 <label>Horário:</label>
                 <select id="select-time">
@@ -78,6 +79,13 @@
                 </div>
 
                 <button id="btn-open-assets" style="margin-top: 15px; background: #e67e22;">Gerenciar Terrenos/Modelos</button>
+
+                <label style="margin-top:10px;">Grade:</label>
+                <div style="display:flex; align-items:center; gap:6px;">
+                    <input type="color" id="grid-color-picker" value="#000000" style="width:36px; height:28px; padding:2px; cursor:pointer; margin:0;">
+                    <label style="margin:0; cursor:pointer; font-size:12px;" for="grid-visible-check">Visível</label>
+                    <input type="checkbox" id="grid-visible-check" checked style="width:auto; margin:0;">
+                </div>
 
                 <div style="display: flex; align-items: center; gap: 8px; margin-top: 10px;">
                     <input type="checkbox" id="check-lock-scenery" checked style="width: auto; margin: 0;">
@@ -198,7 +206,12 @@
                 
                 <label for="new-cor">Cor da Base:</label>
                 <input type="color" id="new-cor" value="#d4af37">
-                
+
+                <div id="modo-chao-container" style="display:flex; align-items:center; gap:8px; margin-top:8px;">
+                    <input type="checkbox" id="new-modo-chao" style="width:auto; margin:0;">
+                    <label for="new-modo-chao" style="margin:0; cursor:pointer;">Modo Chão (malha no terreno)</label>
+                </div>
+
                 <button id="btn-create-item">Salvar na Biblioteca</button>
             </div>
         </div>
